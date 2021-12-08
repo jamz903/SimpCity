@@ -1,0 +1,67 @@
+name: Python Pull Request
+
+# Controls when the workflow will run
+on:
+  pull_request:
+    branches: [ main-temp ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup python 3.8 test
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest pytest-cov
+    - name: Checkout Remote QA code
+      uses: actions/checkout@v2.4.0
+      with:
+        repository: jamz903/SimpCityQARepo
+        path: tests
+        token: ${{ secrets.QA_REMOTE }}
+        
+    - name: Linter Check with Flake 8
+      run: |
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        
+    - name: Label the PR Size
+      uses: coverwallet/pr-labeler@v1.2.1
+      with:
+          xs_max_size: '25'
+          s_max_size: '50'
+          m_max_size: '100'
+          l_max_size: '150'
+          exclude_files: '.txt'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+    - name: Begin Pytest
+      run: |
+        ls
+        mv ./tests/*.* ./
+        pytest -rp --cov -v --junitxml=report.xml 
+ 
+    - if: ${{failure()}}       
+      name: Create Issues
+      uses: nashmaniac/create-issue-action@v1.1
+      with:
+          title: Pull Failed
+          token: ${{secrets.GITHUB_TOKEN}}
+          assignees: ${{github.actor}}
+          labels: workflow-failed
+          body: Workflow failed for commit ${{github.sha}} @ ${{github.ref}}
+    
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        files: report.xml
+        check_run_annotations: all tests
