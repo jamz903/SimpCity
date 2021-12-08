@@ -14,4 +14,5 @@ def display_board(turn_num, board):
             else:
                 print("     |", end="")
         print("\n  +-----+-----+-----+-----+")
+    play_menu([],"HSE", "BCH",[[],[],[],[]])
     return
