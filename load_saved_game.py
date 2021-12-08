@@ -1,4 +1,5 @@
 import os
+from start_new_game import *
 
 # Function to load saved game
 # Currently loads the game from the filename, "SimpCityBoard.csv"
@@ -32,5 +33,5 @@ def load_saved_game(filename):
         turn_number_saved_game_dict["saved_game"] = saved_game
     else:
         print("No saved game file found! Starting new game...")
-        # start_new_game()
+        start_new_game()
     return turn_number_saved_game_dict
