@@ -1,3 +1,5 @@
+from display_board import *
+
 #this function starts a new game
 #create a new board to show to user
 #create variable for turn number
@@ -7,5 +9,5 @@ def start_new_game():
              ["?","?","?","?"],
              ["?","?","?","?"]]
     turn_num = 1
-    #display_board(turn_num, board)
+    display_board(turn_num, board)
     return board, turn_num
