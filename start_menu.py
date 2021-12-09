@@ -1,5 +1,4 @@
-from load_saved_game import *
-from start_new_game import *
+from start_game import *
 
 # display start menu function
 def start_menu(i):
@@ -15,14 +14,12 @@ def start_menu(i):
         option = input("Your choice? ")
         if option in menu_options:
             if option == "1":
-                print("start game") #placeholder text
-                start_new_game()
+                start_game()
             elif option == "2":
-                print("load saved game") #placeholder text
-                load_saved_game("SimpCityBoard.csv")
+                start_game(True)
             else:
                 print("Exiting Simp City...")
                 break
         else:
-            print("Invalid option! Please try again!")
+            print("Invalid option! Please try again!\n")
     return
