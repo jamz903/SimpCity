@@ -1,10 +1,8 @@
+from see_remaining_buildings import *
+from place_building import *
+
 # function to display the menu when user is playing the game
 # takes in the list of buildings (building pool), building 1 and 2 which were randomly selected, and the current Simp City board
-
-#building list = pool of buildings
-#building_1, building_2 = randomly picked buildings
-#board = updated 4x4 board
-
 def play_menu(buildings_list, building_1, building_2, board):
     options_list = ["1", "2", "3", "4", "5", "0"]
     
@@ -21,20 +19,22 @@ def play_menu(buildings_list, building_1, building_2, board):
 
         # checks if user enter in option 1 or 2, which is to build one of the randomly selected building
         if option == "1" or option == "2":
-            print("Option 1/2 selected") #placeholder
+            valid_placement = False
 
-            # checks which building user has selected to build
-            if option == "1":
-                print("build building 1") #placeholder
-                #place_building(building_1, location, board)
-            else:
-                print("build building 2") #placeholder
-                #place_building(building_2, location, board)
+            # loops through to check if user has entered in a valid location coordinate
+            # if not valid coordinate, re-prompt user for location coordinate
+            while not valid_placement:
+                location = input("Build where? ")
+
+                # checks which building user has selected to build
+                if option == "1":
+                    valid_placement = place_building(building_1, location, board)
+                else:
+                    valid_placement = place_building(building_2, location, board)
                     
         elif option == "3":
             print()
-            #see_remaining_buildings(buildings_list)
-            print("Option 3 selected") #placeholder
+            see_remaining_buildings(buildings_list)
         elif option == "4":
             print()
             print("Option 4 selected") #placeholder
