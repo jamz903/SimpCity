@@ -3,6 +3,8 @@ from pick_buildings import *
 from play_menu import *
 from display_board import *
 from validate_saved_file import *
+from final_layout import *
+from check_game_end import *
 import os
 
 # function to start a game
@@ -70,28 +72,36 @@ def start_game(saved_game = False):
     buildings = pick_buildings(buildings_list)
     
     while True:
-        display_board(turn_num, board)
-        option = play_menu(buildings_list, buildings[0], buildings[1], board)
-
-        # checks the value of option
-        # if option is True, means the player entered in 0 (Quit Game) in the play menu
-        if option and option not in options_list:
-            print()
+        #checks if the board is filled
+        # if True, display final layout and computed score and return to main menu
+        if check_game_end(board):
+            final_layout(board)
+            print("\n")
             break
+        
+        else:
+            display_board(turn_num, board)
+            option = play_menu(buildings_list, buildings[0], buildings[1], board, turn_num)
 
-        # checks if the user selected option 1 or 2, which is to build one of the randomly selected buildings
-        if option == "1" or option == "2":
-            # increase turn number count by 1
-            turn_num += 1
+            # checks the value of option
+            # if option is True, means the player entered in 0 (Quit Game) in the play menu
+            if option and option not in options_list:
+                print()
+                break
 
-            # checks which option was selected, whichever option was not selected, the building will be returned to the building pool
-            if option == "1":
-                # e.g. since option 1 was selected, add building_2 back to the pool of buildings
-                buildings_list.append(buildings[1])
-            elif option == "2":
-                buildings_list.append(buildings[0])
+            # checks if the user selected option 1 or 2, which is to build one of the randomly selected buildings
+            if option == "1" or option == "2":
+                # increase turn number count by 1
+                turn_num += 1
 
-            # reset building_1 and building_2 after each iteration
-            buildings = pick_buildings(buildings_list)
+                # checks which option was selected, whichever option was not selected, the building will be returned to the building pool
+                if option == "1":
+                    # e.g. since option 1 was selected, add building_2 back to the pool of buildings
+                    buildings_list.append(buildings[1])
+                elif option == "2":
+                    buildings_list.append(buildings[0])
+
+                # reset building_1 and building_2 after each iteration
+                buildings = pick_buildings(buildings_list)
             
     return
