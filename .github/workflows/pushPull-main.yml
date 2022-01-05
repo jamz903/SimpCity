@@ -44,7 +44,7 @@ jobs:
           title: Pull Failed
           token: ${{secrets.GITHUB_TOKEN}}
           assignees: ${{github.actor}}
-          labels: worflow-failed
+          labels: workflow-failed
           body: Workflow failed for commit ${{github.sha}} @ ${{github.ref}} on main branch
     
     - name: Publish Unit Test Results
