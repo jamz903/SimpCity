@@ -5,7 +5,7 @@ from save_game import *
 
 # function to display the menu when user is playing the game
 # takes in the list of buildings (building pool), building 1 and 2 which were randomly selected, and the current Simp City board
-def play_menu(buildings_list, building_1, building_2, board):
+def play_menu(buildings_list, building_1, building_2, board, turn_num):
     options_list = ["1", "2", "3", "4", "5", "0"]
     
     print("1. Build a " + building_1)
