@@ -1,9 +1,11 @@
 from see_remaining_buildings import *
 from place_building import *
+from view_score import *
+from save_game import *
 
 # function to display the menu when user is playing the game
 # takes in the list of buildings (building pool), building 1 and 2 which were randomly selected, and the current Simp City board
-def play_menu(buildings_list, building_1, building_2, board):
+def play_menu(buildings_list, building_1, building_2, board, turn_num):
     options_list = ["1", "2", "3", "4", "5", "0"]
     
     print("1. Build a " + building_1)
@@ -37,10 +39,10 @@ def play_menu(buildings_list, building_1, building_2, board):
             see_remaining_buildings(buildings_list)
         elif option == "4":
             print()
-            print("Option 4 selected") #placeholder
+            view_score(board)
         elif option == "5":
             print()
-            print("Option 5 selected") #placeholder
+            save_game(turn_num, board)
         else:
             # Not option 1-5, means option 0 selected
             # returns true, means user wishes to quit playing the game
