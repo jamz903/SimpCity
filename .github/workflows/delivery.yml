@@ -22,40 +22,10 @@ jobs:
       with: 
         repository: jamz903/SimpCity
     
-    - name: Checkout private repo remotely
-      uses: actions/checkout@v2
-      with:
-        repository: jamz903/SimpCityQARepo
-        path: tests
-        token: ${{ secrets.QA_REMOTE }}
-    
     - name: Linter Check with Flake8
       run: |
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics 
-      
-    - name: Begin Pytest
-      run: |
-        ls
-        mv ./tests/*.* ./
-        pytest --cov -v --junitxml=report.xml
-    
-    - if: ${{failure()}}       
-      name: Create Issues
-      uses: nashmaniac/create-issue-action@v1.1
-      with:
-          title: Build Failed
-          token: ${{secrets.GITHUB_TOKEN}}
-          assignees: ${{github.actor}}
-          labels: workflow-failed
-          body: Workflow failed for commit ${{github.sha}} @ ${{github.ref}}
-    
-    - name: Publish Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v1.5
-      if: always()
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        files: report.xml
         
   release:
     runs-on: ubuntu-latest
@@ -133,3 +103,43 @@ jobs:
           Repository: ${{ github.repository }}
           
           View our Release: https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}
+    
+    - name: Send mail
+      uses: dawidd6/action-send-mail@v3
+      with:
+        # Required mail server address:
+        server_address: smtp.gmail.com
+        # Required mail server port:
+        server_port: 465
+        # Optional (recommended): mail server username:
+        username: ${{secrets.MAIL_USERNAME}}
+        # Optional (recommended) mail server password:
+        password: ${{secrets.MAIL_PASSWORD}}
+        # Required mail subject:
+        subject: Simp City Release ${{ env.RELEASE_VERSION }}
+        # Required recipients' addresses:
+        to: johnecader@gmail.com
+        # Required sender full name (address can be skipped):
+        from: Jamie Toh
+        # Optional whether this connection use TLS (default is true if server_port is 465)
+        secure: true
+        # Optional plain body:
+        body: |
+          Dear Client,
+            We are delighted to inform you that there has been a new release created under ${{github.repository}}! 
+            View our Release Here: https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}
+            
+            Best Regards,
+            Jamie Toh
+            Simp City Team 2 Scrum Master
+            
+        # Optional carbon copy recipients:
+        cc: justin80@live.com.sg, s10194918@connect.np.edu.sg, ict.devops.consultants@gmail.com
+        # Optional recipient of the email response:
+        reply_to: s10194918@connect.np.edu.sg
+        # Optional unsigned/invalid certificates allowance:
+        ignore_cert: true
+        # Optional converting Markdown to HTML (set content_type to text/html too):
+        convert_markdown: true
+        # Optional priority: 'high', 'normal' (default) or 'low'
+        priority: normal
