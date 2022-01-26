@@ -4,6 +4,8 @@ def validate_saved_file(filename):
 
     board = []
     count = 0
+    building_choices = []
+    building_pool_types = ["BCH", "FAC", "HSE", "SHP", "HWY", "PRK", "MON"]
 
     # retrieves the Simp City board and current turn number from the saved file
     for i in open(filename):
@@ -13,17 +15,21 @@ def validate_saved_file(filename):
             turn_num = int(i)
             count += 1
             continue
+        if count == 1:
+            i = i.split(",")
+            building_choices = i
+            count += 1
+            continue
             
         row = i.split(",")
         board.append(row)
-
     # gets the board length and height 
     grid_height = len(board) - 1
     grid_length = len(board[0]) -1
 
     # first validation: checks if the buildings are valid 
-    # the buildings can only be of type "BCH", "FAC", "HSE", "SHP", "HWY" and "?"
-    building_list = ["BCH", "FAC", "HSE", "SHP", "HWY","?"]
+    # the buildings can only be of type "BCH", "FAC", "HSE", "SHP", "HWY", "PRK", "MON" and "?"
+    building_list = ["BCH", "FAC", "HSE", "SHP", "HWY","?", "PRK", "MON"]
     for row in board:
         for pos in row:  
             if pos not in building_list:
@@ -68,7 +74,7 @@ def validate_saved_file(filename):
                     else:
                         return False
     
-    # fith validation: checks if a valid number of buidlings as per their building type have been placed
+    # fifth validation: checks if a valid number of buidlings as per their building type have been placed
     # move the board into one single list
     occList = []
     for row in board:
@@ -88,4 +94,15 @@ def validate_saved_file(filename):
     for key in counterVAR:
         if (counterVAR[key] > 8): # if a building has more than 8 instances built/placed
             return False
+
+    # sixth validation: checks if the building pool saved are of valid building types
+    for i in building_choices:
+        if i not in building_pool_types:
+            return False
+
+    # seventh validation: checks that the buildings placed on the board are of buildings in the building pool
+    for key in counterVAR:
+        if key not in building_choices:
+            return False
+    
     return True
