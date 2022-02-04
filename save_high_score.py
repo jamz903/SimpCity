@@ -3,6 +3,7 @@ from typing import Dict
 import csv
 from view_high_score import *
 from string import punctuation
+import os
 
 def save_high_score(board, score, debug = False, lb_names = []):
 
@@ -10,9 +11,13 @@ def save_high_score(board, score, debug = False, lb_names = []):
     if debug:
         #create a dictionary for the data 
         
+        leaderboard = []
+        for i in range(40):
+            leaderboard.append([])
         leaderboardNames = []
         leaderboardScores = []
         made_highscore_board = False
+        board_pos = 0
         
         #use -1 to use as an index value later on
         board_size = -1
@@ -24,31 +29,38 @@ def save_high_score(board, score, debug = False, lb_names = []):
         # get dimensions of board (2,8) for view_high_score() function
         board_size_str = str(len(board)) + "," + str(len(board[0]))
 
-        #get the data for the baord
-        with open("SimpCityLeaderboard.csv", "r") as file:
-            reader = csv.reader(file, delimiter=",")
-            leaderboard = list(reader)
-                    
-            #create a dict for the names and scores
-            for value in leaderboard[board_size]:
-                pair = value.split(':')
-            
-                leaderboardNames.append(pair[0])
-                leaderboardScores.append(pair[1])
+        if os.path.exists("SimpCityLeaderboard.csv"):
+            #get the data for the baord
+            with open("SimpCityLeaderboard.csv", "r") as file:
+                reader = csv.reader(file, delimiter=",")
+                leaderboard = list(reader)
+                        
+                #create a dict for the names and scores
+                for value in leaderboard[board_size]:
+                    pair = value.split(':')
+                
+                    leaderboardNames.append(pair[0])
+                    leaderboardScores.append(pair[1])
 
 
-
-        #get the position
-        for i in range(len(leaderboardScores)):
-            if (score > int(leaderboardScores[i])):
-                board_pos = i+1
+        if len(leaderboardScores) < 1:
+            board_pos = 1
+            made_highscore_board = True
+        else:
+            if len(leaderboardScores) < 10:
                 made_highscore_board = True
-                print("Congratulations! You made the high score board at position " + str(board_pos))
-                break
-            else:
-                continue
+                board_pos = len(leaderboardScores) + 1
+            #get the position
+            for i in range(len(leaderboardScores)):
+                if (score > int(leaderboardScores[i])):
+                    board_pos = i+1
+                    made_highscore_board = True
+                    break
+                else:
+                    continue
         
         if (made_highscore_board):
+            print("Congratulations! You made the high score board at position " + str(board_pos))
             while True:
                 #prompt the user for their name 
                 lb_name = lb_names[0]
@@ -91,9 +103,13 @@ def save_high_score(board, score, debug = False, lb_names = []):
         # normal program
         #create a dictionary for the data 
         
+        leaderboard = []
+        for i in range(40):
+            leaderboard.append([])
         leaderboardNames = []
         leaderboardScores = []
         made_highscore_board = False
+        board_pos = 0
         
         #use -1 to use as an index value later on
         board_size = -1
@@ -105,31 +121,38 @@ def save_high_score(board, score, debug = False, lb_names = []):
         # get dimensions of board (2,8) for view_high_score() function
         board_size_str = str(len(board)) + "," + str(len(board[0]))
 
-        #get the data for the baord
-        with open("SimpCityLeaderboard.csv", "r") as file:
-            reader = csv.reader(file, delimiter=",")
-            leaderboard = list(reader)
-                    
-            #create a dict for the names and scores
-            for value in leaderboard[board_size]:
-                pair = value.split(':')
-            
-                leaderboardNames.append(pair[0])
-                leaderboardScores.append(pair[1])
+        if os.path.exists("SimpCityLeaderboard.csv"):
+            #get the data for the baord
+            with open("SimpCityLeaderboard.csv", "r") as file:
+                reader = csv.reader(file, delimiter=",")
+                leaderboard = list(reader)
+                        
+                #create a dict for the names and scores
+                for value in leaderboard[board_size]:
+                    pair = value.split(':')
+                
+                    leaderboardNames.append(pair[0])
+                    leaderboardScores.append(pair[1])
 
 
-
-        #get the position
-        for i in range(len(leaderboardScores)):
-            if (score > int(leaderboardScores[i])):
-                board_pos = i+1
+        if len(leaderboardScores) < 1:
+            board_pos = 1
+            made_highscore_board = True
+        else:
+            if len(leaderboardScores) < 10:
                 made_highscore_board = True
-                print("Congratulations! You made the high score board at position " + str(board_pos))
-                break
-            else:
-                continue
+                board_pos = len(leaderboardScores) + 1
+            #get the position
+            for i in range(len(leaderboardScores)):
+                if (score > int(leaderboardScores[i])):
+                    board_pos = i+1
+                    made_highscore_board = True
+                    break
+                else:
+                    continue
         
         if (made_highscore_board):
+            print("Congratulations! You made the high score board at position " + str(board_pos))
             while True:
                 #prompt the user for their name 
                 lb_name = input("Please enter your name (max 20 char): ")
@@ -166,12 +189,3 @@ def save_high_score(board, score, debug = False, lb_names = []):
         else:
             print()
         return True
-
-
-
-board = [["HSE","HSE","HSE","HSE"],
-        ["HSE","HSE","HSE","HSE"],
-        ["HSE","HSE","HSE","HSE"],
-        ["HSE","HSE","HSE","HSE"]]
-
-#save_high_score(board)
