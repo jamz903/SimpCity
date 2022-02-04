@@ -5,15 +5,16 @@ from display_board import *
 from validate_saved_file import *
 from final_layout import *
 from check_game_end import *
+from generate_new_board import *
 import os
 
 # function to start a game
 # takes in a saved_game parameter with default value False
 # if no parameters provided, means user selected option 1. Start new game
-def start_game(saved_game = False, debug = False, options = [], buildings = [], locations = [], bldgChoicesList = [], lb_names = []):
+def start_game(saved_game = False, debug = False, options = [], buildings = [], locations = [], bldgChoicesList = [], lb_names = [], board_choices = [], board_sizes = []):
     if debug:
         #for system tests
-        options_list = ["1", "2", "3", "4", "5", "0"]
+        options_list = ["1", "2", "3", "4", "0"]
 
         building_types = ["BCH", "FAC", "HSE", "SHP", "HWY", "PRK", "MON"]
         building_choices = []
@@ -78,6 +79,44 @@ def start_game(saved_game = False, debug = False, options = [], buildings = [], 
                 saved_game = False
                 
         if not saved_game:
+            while(True):
+                board_choice = board_choices[0]
+                board_choices.pop(0)
+                if (board_choice.isalpha()):
+                    if (board_choice.upper() == "Y"):
+                        #stuff here
+                        while(True):
+                            print("Customizing your board size\n----------------------------------\nRequirements\n1) Max area size 40\n2)No. of columns <=26\n")
+                            board_size = board_sizes[0]
+                            board_sizes.pop(0)
+                            # board_size = input("Please enter the board dimensions (e.g. 4,4): ")
+
+                            board_size = board_size.strip()
+
+                            board_size = board_size.split(",")
+                            #board_size 0 is the length and 1 is breadth 
+                            if (board_size[0].isdigit() and board_size[1].isdigit()):
+                                if (int(board_size[1]) * int(board_size[0]) <= 40 and int(board_size[1]) * int(board_size[0]) >= 2):
+
+                                    if(int(board_size[1]) <= 26):
+
+                                        board = generate_new_board(int(board_size[0]), int(board_size[1]))
+                                        break
+                                    else:
+                                        print("Please do not exceed 26 in length")
+                                else:
+                                    print("Invalid input! Please enter in a valid board size that has an area size smaller than or equal to 40 and greater than 2.")
+
+                            else:
+                                print("Please ensure that the values inputted are numbers")
+                        break 
+                    elif(board_choice.upper() == "N"):
+                        board = generate_new_board(4,4)
+                        break
+                    else:
+                        print("Invalid input! Please enter in Y or N only.")
+                else:
+                    print("Invalid input! Please enter in Y or N only.")
             print("Please select your building pool\nYou can pick from these listed buildings\n- BCH\n- FAC\n- HSE\n- HWY\n- MON\n- PRK\n- SHP\n")
             while (selecting_building_pool):
                 building_choices = []
@@ -122,7 +161,7 @@ def start_game(saved_game = False, debug = False, options = [], buildings = [], 
                 else:#re-prompts the user to choose 5 unique buildings
                     print("Please only choose 1 of each type of building")
                     continue
-
+        
         buildings = pick_buildings(buildings_list, debug, buildings)
         
         while True:
@@ -134,7 +173,15 @@ def start_game(saved_game = False, debug = False, options = [], buildings = [], 
                 break
             
             else:
-                display_board(turn_num, board)
+                generator1, generator2 = display_board(turn_num, board), see_remaining_buildings(buildings_list, board, building_choices)
+                while True:
+                    try:
+                        next(generator1)
+                        print(' ', end='')
+                        next(generator2)
+                        print()
+                    except StopIteration:
+                        break
                 option = play_menu(buildings_list, building_choices, buildings[0], buildings[1], board, turn_num, debug, options, buildings, locations)
                 # checks the value of option
                 # if option is True, means the player entered in 0 (Quit Game) in the play menu
@@ -160,7 +207,7 @@ def start_game(saved_game = False, debug = False, options = [], buildings = [], 
                     
     else:
         #normal program
-        options_list = ["1", "2", "3", "4", "5", "0"]
+        options_list = ["1", "2", "3", "4", "0"]
 
         building_types = ["BCH", "FAC", "HSE", "SHP", "HWY", "PRK", "MON"]
         building_choices = []
@@ -221,6 +268,41 @@ def start_game(saved_game = False, debug = False, options = [], buildings = [], 
                 saved_game = False
                 
         if not saved_game:
+            while(True):
+                board_choice = input("The default board size is a 4x4 board. Would you like to customize your own? (Y/N): ")
+                if (board_choice.isalpha()):
+                    if (board_choice.upper() == "Y"):
+                        #stuff here
+                        while(True):
+                            print("Customizing your board size\n----------------------------------\nRequirements\n1) Max area size 40\n2)No. of columns <=26\n")
+                            board_size = input("Please enter the board dimensions (e.g. 4,4): ")
+
+                            board_size = board_size.strip()
+
+                            board_size = board_size.split(",")
+                            #board_size 0 is the length and 1 is breadth 
+                            if (board_size[0].isdigit() and board_size[1].isdigit()):
+                                if (int(board_size[1]) * int(board_size[0]) <= 40 and int(board_size[1]) * int(board_size[0]) >= 2):
+
+                                    if(int(board_size[1]) <= 26):
+
+                                        board = generate_new_board(int(board_size[0]), int(board_size[1]))
+                                        break
+                                    else:
+                                        print("Please do not exceed 26 in length")
+                                else:
+                                    print("Invalid input! Please enter in a valid board size that has an area size smaller than or equal to 40 and greater than 2.")
+
+                            else:
+                                print("Please ensure that the values inputted are numbers")
+                        break 
+                    elif(board_choice.upper() == "N"):
+                        board = generate_new_board(4,4)
+                        break
+                    else:
+                        print("Invalid input! Please enter in Y or N only.")
+                else:
+                    print("Invalid input! Please enter in Y or N only.")
             print("Please select your building pool\nYou can pick from these listed buildings\n- BCH\n- FAC\n- HSE\n- HWY\n- MON\n- PRK\n- SHP\n")
             while (selecting_building_pool):
                 building_choices = []
@@ -275,7 +357,15 @@ def start_game(saved_game = False, debug = False, options = [], buildings = [], 
                 break
             
             else:
-                display_board(turn_num, board)
+                generator1, generator2 = display_board(turn_num, board), see_remaining_buildings(buildings_list, board, building_choices)
+                while True:
+                    try:
+                        next(generator1)
+                        print(' ', end='')
+                        next(generator2)
+                        print()
+                    except StopIteration:
+                        break
                 option = play_menu(buildings_list, building_choices, buildings[0], buildings[1], board, turn_num)
 
                 # checks the value of option
