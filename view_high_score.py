@@ -4,6 +4,7 @@
 
 from asyncore import read
 import csv 
+import os
 def view_high_score(board_size = "0,0", debug = False, board_size_list = []):
     # for system tests
     if debug:
@@ -53,23 +54,27 @@ def view_high_score(board_size = "0,0", debug = False, board_size_list = []):
         print("{:<3}{:>7}{:>21}".format("Pos","Player","Score"))
         print("{:<3}{:>7}{:>21}".format("---","------","-----"))
 
-        # Retrieve high scores from CSV file (SimpCityLeaderboard)
-        with open("SimpCityLeaderboard.csv", "r") as file:
-            reader = csv.reader(file)
-            for i in range(int(area)-1):
-                next(reader)                            # Skip the necessary number of rows
-            row = next(reader)                          # "row" contains row number X now
-            
-            count = 1                                   # For the ranking number...
-            if row != []:                                   
-                for i in row:
-                    player_data = i.split(":")
-                    print("{:>3} {:<20}{:>7}".format(str(count) + ".", player_data[0], player_data[1]))
-                    count+=1
-            else:
-                print("No high scores currently!")
+        if os.path.exists("SimpCityLeaderboard.csv"):
+            # Retrieve high scores from CSV file (SimpCityLeaderboard)
+            with open("SimpCityLeaderboard.csv", "r") as file:
+                reader = csv.reader(file)
+                for i in range(int(area)-1):
+                    next(reader)                            # Skip the necessary number of rows
+                row = next(reader)                          # "row" contains row number X now
+                
+                count = 1                                   # For the ranking number...
+                if row != []:                                   
+                    for i in row:
+                        player_data = i.split(":")
+                        print("{:>3} {:<20}{:>7}".format(str(count) + ".", player_data[0], player_data[1]))
+                        count+=1
+                else:
+                    print("No high scores currently!")
 
-        print("-------------------------------\n")
+            print("-------------------------------\n")
+        else:
+            print("No high scores currently!")
+            print("-------------------------------\n")
     else:
         # normal program
         error_message = "Invalid input. Please try again...(e.g. 5,8)"
@@ -116,23 +121,24 @@ def view_high_score(board_size = "0,0", debug = False, board_size_list = []):
         print("{:<3}{:>7}{:>21}".format("Pos","Player","Score"))
         print("{:<3}{:>7}{:>21}".format("---","------","-----"))
 
-        # Retrieve high scores from CSV file (SimpCityLeaderboard)
-        with open("SimpCityLeaderboard.csv", "r") as file:
-            reader = csv.reader(file)
-            for i in range(int(area)-1):
-                next(reader)                            # Skip the necessary number of rows
-            row = next(reader)                          # "row" contains row number X now
-            
-            count = 1                                   # For the ranking number...
-            if row != []:                                   
-                for i in row:
-                    player_data = i.split(":")
-                    print("{:>3} {:<20}{:>7}".format(str(count) + ".", player_data[0], player_data[1]))
-                    count+=1
-            else:
-                print("No high scores currently!")
+        if os.path.exists("SimpCityLeaderboard.csv"):
+            # Retrieve high scores from CSV file (SimpCityLeaderboard)
+            with open("SimpCityLeaderboard.csv", "r") as file:
+                reader = csv.reader(file)
+                for i in range(int(area)-1):
+                    next(reader)                            # Skip the necessary number of rows
+                row = next(reader)                          # "row" contains row number X now
+                
+                count = 1                                   # For the ranking number...
+                if row != []:                                   
+                    for i in row:
+                        player_data = i.split(":")
+                        print("{:>3} {:<20}{:>7}".format(str(count) + ".", player_data[0], player_data[1]))
+                        count+=1
+                else:
+                    print("No high scores currently!")
 
-        print("-------------------------------\n")
-
-
-#view_high_score()
+            print("-------------------------------\n")
+        else:
+            print("No high scores currently!")
+            print("-------------------------------\n")
