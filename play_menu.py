@@ -8,13 +8,12 @@ from save_game import *
 def play_menu(buildings_list, building_pool, building_1, building_2, board, turn_num, debug = False, options = [], buildings = [], locations = []):
     if debug:
         #for system tests
-        options_list = ["1", "2", "3", "4", "5", "0"]
-        
+        options_list = ["1", "2", "3", "4", "0"]
+
         print("1. Build a " + buildings[0])
         print("2. Build a " + buildings[1])
-        print("3. See remaining buildings")
-        print("4. See current score\n")
-        print("5. Save game")
+        print("3. See current score\n")
+        print("4. Save game")
         print("0. Exit to main menu")
 
         option = options[0]
@@ -40,11 +39,8 @@ def play_menu(buildings_list, building_pool, building_1, building_2, board, turn
                         
             elif option == "3":
                 print()
-                see_remaining_buildings(buildings_list)
-            elif option == "4":
-                print()
                 view_score(board, building_pool)
-            elif option == "5":
+            elif option == "4":
                 print()
                 save_game(turn_num, building_pool, board)
             else:
@@ -60,13 +56,12 @@ def play_menu(buildings_list, building_pool, building_1, building_2, board, turn
             
     else:
         #normal program
-        options_list = ["1", "2", "3", "4", "5", "0"]
+        options_list = ["1", "2", "3", "4", "0"]
         
         print("1. Build a " + building_1)
         print("2. Build a " + building_2)
-        print("3. See remaining buildings")
-        print("4. See current score\n")
-        print("5. Save game")
+        print("3. See current score\n")
+        print("4. Save game")
         print("0. Exit to main menu")
         option = input("Your choice? ")
 
@@ -87,14 +82,10 @@ def play_menu(buildings_list, building_pool, building_1, building_2, board, turn
                         valid_placement = place_building(building_1, location, board)
                     else:
                         valid_placement = place_building(building_2, location, board)
-                        
             elif option == "3":
                 print()
-                see_remaining_buildings(buildings_list)
-            elif option == "4":
-                print()
                 view_score(board, building_pool)
-            elif option == "5":
+            elif option == "4":
                 print()
                 save_game(turn_num, building_pool, board)
             else:
@@ -104,4 +95,4 @@ def play_menu(buildings_list, building_pool, building_1, building_2, board, turn
         else:
             print("Invalid option! Please try again!")
             option = False
-    return option
+        return option
