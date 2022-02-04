@@ -1,392 +1,77 @@
-from generate_new_game_buildings import *
-from pick_buildings import *
-from play_menu import *
-from display_board import *
-from validate_saved_file import *
-from final_layout import *
-from check_game_end import *
-from generate_new_board import *
-import os
+from re import S
+from start_game import *
+from view_high_score import *
+import sys
 
-# function to start a game
-# takes in a saved_game parameter with default value False
-# if no parameters provided, means user selected option 1. Start new game
-def start_game(saved_game = False, debug = False, options = [], buildings = [], locations = [], bldgChoicesList = [], lb_names = [], board_choices = [], board_sizes = []):
+# display start menu function
+def start_menu(i, debug = False, options = [], buildings = [], locations = [], bldgChoicesList = [], lb_names = [], board_size_list = [], board_choices = [], board_sizes = []):
     if debug:
         #for system tests
-        options_list = ["1", "2", "3", "4", "0"]
-
-        building_types = ["BCH", "FAC", "HSE", "SHP", "HWY", "PRK", "MON"]
-        building_choices = []
-        selecting_building_pool = True
-        buildings_list = [] #generate_new_game_buildings()
-        
-        # generates new board and set turn number to 1
-        board = [["?","?","?","?"],
-                 ["?","?","?","?"],
-                 ["?","?","?","?"],
-                 ["?","?","?","?"]]
-        turn_num = 1
-
-        # checks if saved_game is True or False
-        if saved_game:
-            # saved_game = False, user selected Option 2. Load saved game
-            # filename of the saved game
-            filename = "SimpCityBoard.csv"
-
-            # checks if the file named e.g. SimpCityBoard.csv exists
-            if os.path.exists(filename):
-                board = []
-                count = 0
-                if validate_saved_file(filename):
-
-                    # loops through each line in the .csv file
-                    for i in open(filename):
-                        i = i.strip("\n")
-
-                        # checks if the current line is first line
-                        # if is first line, retrieve the turn number, stored in the first line of the .csv file
-                        if count == 0:
-                            turn_num = int(i)
-                            count += 1
-                            continue
-                        if count == 1:
-                            i = i.split(",")
-                            building_choices = i
-                            count += 1
-                            continue
-                        # if not first line, split the line by ',' and append it to the board
-                        row = i.split(",")
-                        board.append(row)
-                    buildings_list = generate_new_game_buildings(building_choices)
-                    # as this is a saved game, need to remove buildings that are already built on the board (if any)
-                    # loops through each space on the board and check if there is a building built
-                    for i in range(len(board)):
-                        for j in range(len(board[i])):
-                            # checks if space is empty space or building, "?" - empty space, not "?" means is a building
-                            if (board[i][j] != "?"):
-                                # removes it from the building pool
-                                buildings_list.remove(board[i][j])
-
+        # stores the valid options that users can enter
+        menu_options = ["0", "1", "2", "3"]
+        while (i!=0):
+            i -= 1
+            print("Welcome, mayor of Simp City!")
+            print("----------------------------")
+            print("1. Start new game")
+            print("2. Load saved game")
+            print("3. Show high scores\n")
+            print("0. Exit")
+            if options[0] in menu_options:
+                if options[0] == "1":
+                    options.pop(0)
+                    start_game(False, debug, options, buildings, locations, bldgChoicesList, lb_names, board_choices, board_sizes)
+                elif options[0] == "2":
+                    options.pop(0)
+                    start_game(True, debug, options, buildings, locations, bldgChoicesList, lb_names, board_choices, board_sizes)
+                elif options[0] == "3":
+                    options.pop(0)
+                    view_high_score(debug=debug, board_size_list=board_size_list)
                 else:
-                    #saved file is not valid
-                    print("The saved file is invalid. Returning to main menu.\n")
-                    return
-
-            else:
-                # saved file does not exists, start a new game for player
-                print("No saved game file found! Starting new game...\n")
-                saved_game = False
-                
-        if not saved_game:
-            while(True):
-                board_choice = board_choices[0]
-                board_choices.pop(0)
-                if (board_choice.isalpha()):
-                    if (board_choice.upper() == "Y"):
-                        #stuff here
-                        while(True):
-                            print("Customizing your board size\n----------------------------------\nRequirements\n1) Max area size 40\n2)No. of columns <=26\n")
-                            board_size = board_sizes[0]
-                            board_sizes.pop(0)
-                            # board_size = input("Please enter the board dimensions (e.g. 4,4): ")
-
-                            board_size = board_size.strip()
-
-                            board_size = board_size.split(",")
-                            #board_size 0 is the length and 1 is breadth 
-                            if (board_size[0].isdigit() and board_size[1].isdigit()):
-                                if (int(board_size[1]) * int(board_size[0]) <= 40 and int(board_size[1]) * int(board_size[0]) >= 2):
-
-                                    if(int(board_size[1]) <= 26):
-
-                                        board = generate_new_board(int(board_size[0]), int(board_size[1]))
-                                        break
-                                    else:
-                                        print("Please do not exceed 26 in length")
-                                else:
-                                    print("Invalid input! Please enter in a valid board size that has an area size smaller than or equal to 40 and greater than 2.")
-
-                            else:
-                                print("Please ensure that the values inputted are numbers")
-                        break 
-                    elif(board_choice.upper() == "N"):
-                        board = generate_new_board(4,4)
-                        break
-                    else:
-                        print("Invalid input! Please enter in Y or N only.")
-                else:
-                    print("Invalid input! Please enter in Y or N only.")
-            print("Please select your building pool\nYou can pick from these listed buildings\n- BCH\n- FAC\n- HSE\n- HWY\n- MON\n- PRK\n- SHP\n")
-            while (selecting_building_pool):
-                building_choices = []
-                #bldgChoices = input("Please enter your building pool here (i.e. HSE, FAC, MON, PRK, SHP): ")
-                bldgChoices = bldgChoicesList[0]
-                bldgChoicesList.pop(0)
-
-                #validate the choices
-
-                #remove any whitespace from the left or right of the string
-                bldgChoices = bldgChoices.strip()
-
-                #convert the strings to a list
-                bldgChoices = bldgChoices.split(",")
-
-                bldgChoices = list(map(str.strip, bldgChoices))
-
-                #check if 5 buildings were chosen
-                if(len(set(bldgChoices)) == len(bldgChoices)):
-
-                    if(len(bldgChoices) == 5):
-                        #check for valid building type input
-                        for i in bldgChoices:
-                            i = i.strip()
-                            i = i.upper()
-                            if i in building_types:
-                                building_choices.append(i)
-
-                                #if all the inputs pass x8 each of the choices and return the full list
-                                if (len(building_choices) == 5):
-                                    buildings_list = generate_new_game_buildings(building_choices)
-                                    selecting_building_pool = False
-                                    break
-                                    
-                            else: #if there is building type error
-                                print("Invalid building type input")
-                                break
-                                
-                    else: #re-prompts the user to enter 5 real buidlings
-                        print("Please enter 5 building types")
-                        continue
-                else:#re-prompts the user to choose 5 unique buildings
-                    print("Please only choose 1 of each type of building")
-                    continue
-        
-        buildings = pick_buildings(buildings_list, debug, buildings)
-        
-        while True:
-            #checks if the board is filled
-            # if True, display final layout and computed score and return to main menu
-            if check_game_end(board):
-                final_layout(board, building_choices, debug = debug, lb_names = lb_names)
-                print()
-                break
-            
-            else:
-                generator1, generator2 = display_board(turn_num, board), see_remaining_buildings(buildings_list, board, building_choices)
-                while True:
-                    try:
-                        next(generator1)
-                        print(' ', end='')
-                        next(generator2)
-                        print()
-                    except StopIteration:
-                        break
-                option = play_menu(buildings_list, building_choices, buildings[0], buildings[1], board, turn_num, debug, options, buildings, locations)
-                # checks the value of option
-                # if option is True, means the player entered in 0 (Quit Game) in the play menu
-                if option and option not in options_list:
-                    print()
+                    print("Exiting Simp City...")
+                    options.pop(0)
                     break
-                
-                # checks if the user selected option 1 or 2, which is to build one of the randomly selected buildings
-                if option == "1" or option == "2":
-                    used_building_1 = buildings.pop(0)
-                    used_building_2 = buildings.pop(0)
-                    # increase turn number count by 1
-                    turn_num += 1
+            else:
+                print("Invalid option! Please try again!\n")
+                options.pop(0)
 
-                    # checks which option was selected, whichever option was not selected, the building will be returned to the building pool
-                    if option == "1":
-                        # e.g. since option 1 was selected, add building_2 back to the pool of buildings
-                        buildings_list.append(used_building_2)
-                    elif option == "2":
-                        buildings_list.append(used_building_1)
-                    # reset building_1 and building_2 after each iteration
-                    buildings = pick_buildings(buildings_list, debug, buildings)
-                    
     else:
         #normal program
-        options_list = ["1", "2", "3", "4", "0"]
-
-        building_types = ["BCH", "FAC", "HSE", "SHP", "HWY", "PRK", "MON"]
-        building_choices = []
-        selecting_building_pool = True
-        buildings_list = [] #generate_new_game_buildings()
-        
-        # generates new board and set turn number to 1
-        board = [["?","?","?","?"],
-                 ["?","?","?","?"],
-                 ["?","?","?","?"],
-                 ["?","?","?","?"]]
-        turn_num = 1
-
-        # checks if saved_game is True or False
-        if saved_game:
-            # saved_game = False, user selected Option 2. Load saved game
-            # filename of the saved game
-            filename = "SimpCityBoard.csv"
-
-            # checks if the file named e.g. SimpCityBoard.csv exists
-            if os.path.exists(filename):
-                board = []
-                count = 0
-                if validate_saved_file(filename):
-                    # loops through each line in the .csv file
-                    for i in open(filename):
-                        i = i.strip("\n")
-                        # checks if the current line is first line
-                        # if is first line, retrieve the turn number, stored in the first line of the .csv file
-                        if count == 0:
-                            turn_num = int(i)
-                            count += 1
-                            continue
-                        if count == 1:
-                            i = i.split(",")
-                            building_choices = i
-                            count += 1
-                            continue
-                        # if not first line, split the line by ',' and append it to the board
-                        row = i.split(",")
-                        board.append(row)
-                    buildings_list = generate_new_game_buildings(building_choices)
-                    # as this is a saved game, need to remove buildings that are already built on the board (if any)
-                    # loops through each space on the board and check if there is a building built
-                    for i in range(len(board)):
-                        for j in range(len(board[i])):
-                            # checks if space is empty space or building, "?" - empty space, not "?" means is a building
-                            if (board[i][j] != "?"):
-                                # removes it from the building pool
-                                buildings_list.remove(board[i][j])
+        # stores the valid options that users can enter
+        menu_options = ["0", "1", "2", "3"]
+        while (i!=0):
+            i -= 1
+            print("Welcome, mayor of Simp City!")
+            print("----------------------------")
+            print("1. Start new game")
+            print("2. Load saved game")
+            print("3. Show high scores\n")
+            print("0. Exit")
+            option = input("Your choice? ")
+            if option in menu_options:
+                if option == "1":
+                    start_game()
+                elif option == "2":
+                    start_game(True)
+                elif option == "3":
+                    view_high_score()
                 else:
-                    #saved file is not valid
-                    print("The saved file is invalid. Returning to main menu.\n")
-                    return
-            else:
-                # saved file does not exists, start a new game for player
-                print("No saved game file found! Starting new game...\n")
-                saved_game = False
-                
-        if not saved_game:
-            while(True):
-                board_choice = input("The default board size is a 4x4 board. Would you like to customize your own? (Y/N): ")
-                if (board_choice.isalpha()):
-                    if (board_choice.upper() == "Y"):
-                        #stuff here
-                        while(True):
-                            print("Customizing your board size\n----------------------------------\nRequirements\n1) Max area size 40\n2)No. of columns <=26\n")
-                            board_size = input("Please enter the board dimensions (e.g. 4,4): ")
-
-                            board_size = board_size.strip()
-
-                            board_size = board_size.split(",")
-                            #board_size 0 is the length and 1 is breadth 
-                            if (board_size[0].isdigit() and board_size[1].isdigit()):
-                                if (int(board_size[1]) * int(board_size[0]) <= 40 and int(board_size[1]) * int(board_size[0]) >= 2):
-
-                                    if(int(board_size[1]) <= 26):
-
-                                        board = generate_new_board(int(board_size[0]), int(board_size[1]))
-                                        break
-                                    else:
-                                        print("Please do not exceed 26 in length")
-                                else:
-                                    print("Invalid input! Please enter in a valid board size that has an area size smaller than or equal to 40 and greater than 2.")
-
-                            else:
-                                print("Please ensure that the values inputted are numbers")
-                        break 
-                    elif(board_choice.upper() == "N"):
-                        board = generate_new_board(4,4)
-                        break
-                    else:
-                        print("Invalid input! Please enter in Y or N only.")
-                else:
-                    print("Invalid input! Please enter in Y or N only.")
-            print("Please select your building pool\nYou can pick from these listed buildings\n- BCH\n- FAC\n- HSE\n- HWY\n- MON\n- PRK\n- SHP\n")
-            while (selecting_building_pool):
-                building_choices = []
-                bldgChoices = input("Please enter your building pool here (i.e. HSE, FAC, MON, PRK, SHP): ")
-
-                #validate the choices
-
-                #remove any whitespace from the left or right of the string
-                bldgChoices = bldgChoices.strip()
-
-                #convert the strings to a list
-                bldgChoices = bldgChoices.split(",")
-
-                bldgChoices = list(map(str.strip, bldgChoices))
-
-                #check if 5 buildings were chosen
-                if(len(set(bldgChoices)) == len(bldgChoices)):
-
-                    if(len(bldgChoices) == 5):
-                        #check for valid building type input
-                        for i in bldgChoices:
-                            i = i.strip()
-                            i = i.upper()
-                            if i in building_types:
-                                building_choices.append(i)
-
-                                #if all the inputs pass x8 each of the choices and return the full list
-                                if (len(building_choices) == 5):
-                                    buildings_list = generate_new_game_buildings(building_choices)
-                                    selecting_building_pool = False
-                                    break
-                                    
-                            else: #if there is building type error
-                                print("Invalid building type input")
-                                break
-                                
-                    else: #re-prompts the user to enter 5 real buidlings
-                        print("Please enter 5 building types")
-                        continue
-                else:#re-prompts the user to choose 5 unique buildings
-                    print("Please only choose 1 of each type of building")
-                    continue
-            
-        buildings = pick_buildings(buildings_list)
-        
-        while True:
-            #checks if the board is filled
-            # if True, display final layout and computed score and return to main menu
-            if check_game_end(board):
-                final_layout(board, building_choices)
-                print()
-                break
-            
-            else:
-                generator1, generator2 = display_board(turn_num, board), see_remaining_buildings(buildings_list, board, building_choices)
-                while True:
-                    try:
-                        next(generator1)
-                        print(' ', end='')
-                        next(generator2)
-                        print()
-                    except StopIteration:
-                        break
-                option = play_menu(buildings_list, building_choices, buildings[0], buildings[1], board, turn_num)
-
-                # checks the value of option
-                # if option is True, means the player entered in 0 (Quit Game) in the play menu
-                if option and option not in options_list:
-                    print()
+                    print("Exiting Simp City...")
                     break
-
-                # checks if the user selected option 1 or 2, which is to build one of the randomly selected buildings
-                if option == "1" or option == "2":
-                    # increase turn number count by 1
-                    turn_num += 1
-
-                    # checks which option was selected, whichever option was not selected, the building will be returned to the building pool
-                    if option == "1":
-                        # e.g. since option 1 was selected, add building_2 back to the pool of buildings
-                        buildings_list.append(buildings[1])
-                    elif option == "2":
-                        buildings_list.append(buildings[0])
-
-                    # reset building_1 and building_2 after each iteration
-                    buildings = pick_buildings(buildings_list)
-            
+            else:
+                print("Invalid option! Please try again!\n")
     return
+
+if __name__ == "__main__":
+    if (len(sys.argv[1:]) != 0):
+        # print(sys.argv[1:])
+        i = int(sys.argv[1])
+        options = [c for c in sys.argv[3].split(',')]
+        buildings = [c for c in sys.argv[4].split(',')]
+        locations = [c for c in sys.argv[5].split(',')]
+        bldgChoicesList = [c for c in sys.argv[6].split('.')]
+        lb_names = [c for c in sys.argv[7].split(',')]
+        board_size_list = [c for c in sys.argv[8].split('.')]
+        board_choices = [c for c in sys.argv[9].split(',')]
+        board_sizes = [c for c in sys.argv[10].split('.')]
+        start_menu(i, sys.argv[2], options, buildings, locations, bldgChoicesList, lb_names, board_size_list, board_choices, board_sizes)
