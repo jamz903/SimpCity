@@ -2,24 +2,32 @@
 
 # e.g.
 # ["HWY", "HWY", "PRK", "MON"],
-# ["PRK", "FAC", "PRK", "SHP"],
+# ["PRK", "HSE", "PRK", "SHP"],
 # ["PRK", "MON", "PRK", "MON"],
 # ["MON", "FAC", "HWY", "MON"]
 
-# FAC: 2 + 2 = 4
+# HSE: 0 = 0
+# FAC: 1 = 1
 # SHP: 2 = 2
 # HWY: 2 + 2 + 1 = 5
+# BCH: 0
 # PRK: 8 + 3 = 11
 # MON: 4 + 4 + 4 + 4 + 4 = 20
-# Total score: 42
+# Total score: 39
 
 from lib2to3.pgen2.token import RPAR
 
 
 def view_score(board, building_pool):
 
-    n = 4
-    m = 4
+    grid_height = len(board) - 1
+    grid_length = len(board[0]) -1
+    true_grid_height = len(board)
+    true_grid_length = len(board[0])
+
+    n = true_grid_height
+    m = true_grid_length
+
     def is_valid(x, y, matrix):
         if (x < n and y < m and x >= 0 and y >= 0):
             if (visited[x][y] == False and matrix[x][y] == "PRK"):
@@ -47,20 +55,16 @@ def view_score(board, building_pool):
     mon_corner = 0
     mon_other = 0
 
-    grid_height = len(board) - 1
-    grid_length = len(board[0]) -1
-    true_grid_height = len(board) 
-    true_grid_length = len(board[0])
-
     adjList = []
 
     # Parks
     # stores information about which cell
     # are already visited in a particular BFS
-    visited = [[False for i in range(true_grid_height)] for j in range(true_grid_length)]
 
-    # Stores the final result grid
-    result = [[0 for i in range(true_grid_height)] for j in range(true_grid_length)]
+    #true_grid_height = 1
+    #true_grid_length = 26
+
+    visited = [[False for i in range(true_grid_length)] for j in range(true_grid_height)]
 
     # Stores the count of cells in
     # the largest connected component
@@ -73,7 +77,7 @@ def view_score(board, building_pool):
 
             #Calculate Beach 
             if(board[row][column] == "BCH"):
-                if column == 0 or column == 3:
+                if column == 0 or column == grid_length:
                     bch_score.append(3)
                 else:
                     bch_score.append(1)
@@ -96,13 +100,13 @@ def view_score(board, building_pool):
                         
                         gridList = []
 
-                        if(not row + 1 > grid_length):
+                        if(not row + 1 > grid_height):
                             gridList.append(board[row + 1][column])
 
                         if(not row - 1 < 0):
                             gridList.append(board[row - 1][column])
 
-                        if(not column + 1 > grid_height):
+                        if(not column + 1 > grid_length):
                             gridList.append(board[row][column + 1])
 
                         if(not column - 1 < 0):
@@ -119,13 +123,13 @@ def view_score(board, building_pool):
             elif(board[row][column] == "SHP"):
                 gridList = []
 
-                if(not row + 1 > grid_length):
+                if(not row + 1 > grid_height):
                     gridList.append(board[row + 1][column])
 
                 if(not row - 1 < 0):
                     gridList.append(board[row - 1][column])
 
-                if(not column + 1 > grid_height):
+                if(not column + 1 > grid_length):
                     gridList.append(board[row][column + 1])
 
                 if(not column - 1 < 0):
@@ -139,7 +143,7 @@ def view_score(board, building_pool):
             elif(board[row][column] == "HWY"):
                 if column <= stoppedAt:
                     column = stoppedAt+1
-                if column > 3:
+                if column > grid_length:
                     break
                 
                 if board[row][column] == "HWY":
@@ -210,7 +214,7 @@ def view_score(board, building_pool):
             #Corner D1 : 4 (grid_height), 0
             #Corner A4 : 4 (grid_height), 4 (grid_length)
             elif(board[row][column] == "MON"):
-                if((column == 0 and row == 0) or (column == 0 and row == grid_length) or (column == grid_height and row == 0) or (column == grid_height and row == grid_length)):
+                if((column == 0 and row == 0) or (column == 0 and row == grid_height) or (column == grid_length and row == 0) or (column == grid_length and row == grid_height)):
                     mon_corner += 1
                 else:
                     mon_other +=1
