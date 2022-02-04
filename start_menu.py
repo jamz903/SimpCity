@@ -4,7 +4,7 @@ from view_high_score import *
 import sys
 
 # display start menu function
-def start_menu(i, debug = False, options = [], buildings = [], locations = [], bldgChoicesList = [], lb_names = [], board_size_list = []):
+def start_menu(i, debug = False, options = [], buildings = [], locations = [], bldgChoicesList = [], lb_names = [], board_size_list = [], board_choices = [], board_sizes = []):
     if debug:
         #for system tests
         # stores the valid options that users can enter
@@ -20,15 +20,16 @@ def start_menu(i, debug = False, options = [], buildings = [], locations = [], b
             if options[0] in menu_options:
                 if options[0] == "1":
                     options.pop(0)
-                    start_game(False, debug, options, buildings, locations, bldgChoicesList, lb_names)
+                    start_game(False, debug, options, buildings, locations, bldgChoicesList, lb_names, board_choices, board_sizes)
                 elif options[0] == "2":
                     options.pop(0)
-                    start_game(True, debug, options, buildings, locations, bldgChoicesList, lb_names)
+                    start_game(True, debug, options, buildings, locations, bldgChoicesList, lb_names, board_choices, board_sizes)
                 elif options[0] == "3":
                     options.pop(0)
                     view_high_score(debug=debug, board_size_list=board_size_list)
                 else:
                     print("Exiting Simp City...")
+                    options.pop(0)
                     break
             else:
                 print("Invalid option! Please try again!\n")
@@ -61,16 +62,16 @@ def start_menu(i, debug = False, options = [], buildings = [], locations = [], b
                 print("Invalid option! Please try again!\n")
     return
 
-# if function is executed by process using cmd
 if __name__ == "__main__":
     if (len(sys.argv[1:]) != 0):
+        # print(sys.argv[1:])
         i = int(sys.argv[1])
-        
-        # split the arguments to retrieve the inputs as a list
         options = [c for c in sys.argv[3].split(',')]
         buildings = [c for c in sys.argv[4].split(',')]
         locations = [c for c in sys.argv[5].split(',')]
         bldgChoicesList = [c for c in sys.argv[6].split('.')]
         lb_names = [c for c in sys.argv[7].split(',')]
         board_size_list = [c for c in sys.argv[8].split('.')]
-        start_menu(i, sys.argv[2], options, buildings, locations, bldgChoicesList, lb_names, board_size_list)
+        board_choices = [c for c in sys.argv[9].split(',')]
+        board_sizes = [c for c in sys.argv[10].split('.')]
+        start_menu(i, sys.argv[2], options, buildings, locations, bldgChoicesList, lb_names, board_size_list, board_choices, board_sizes)
