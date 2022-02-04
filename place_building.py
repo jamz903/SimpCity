@@ -6,8 +6,15 @@ from convert_board_coords_to_index import *
 def place_building(building, location, board):
 
     # location_letter and location_number stores the valid location coordinate values that the user can enter in
-    location_letter = ["a", "b", "c", "d"]
-    location_number = ["1", "2", "3", "4"]
+    location_letter = []
+    location_number = []
+
+    alphabets = "abcdefghijklmnopqrstuvwxyz"
+    for i in range(len(board[0])):
+        location_letter.append(alphabets[i])
+
+    for i in range(len(board)):
+        location_number.append(str(i+1))
 
     # global variable to check if the board currently has any building built
     buildings_present = False
@@ -28,13 +35,13 @@ def place_building(building, location, board):
     # checks that the user did not key in an empty string for the location
     if location != "":
         # checks that the user has keyed in a value that is 2 characters long
-        if len(location) == 2:
+        if len(location) <= 3:
 
             # checks that the user has keyed in a valid location coordinate
             # .lower() to allow upper and lower case characters to be entered in
             # if location[0].lower() is not found in location_letter or if location[1] is not found in location_number,
             # means that the user has entered in an invalid location coordinate
-            if location[0].lower() not in location_letter or location[1] not in location_number:
+            if location[0].lower() not in location_letter or location[1:] not in location_number:
                 print("Invalid location coordinates! Please enter in a valid location coordinate!")
             else:
 
@@ -76,4 +83,5 @@ def place_building(building, location, board):
             print("Invalid input! Please enter in a valid location coordinate!")
     else:
         print("Invalid input! Please enter in a valid location coordinate!")
+
     return valid_placement
